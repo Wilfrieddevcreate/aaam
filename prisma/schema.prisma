@@ -36,5 +36,36 @@ model Event {
   date        DateTime
   speaker     String
   link        String   // Meet / Discord link
+  requests    MasterclassRequest[]
   createdAt   DateTime @default(now())
+}
+
+model MasterclassRequest {
+  id                String   @id @default(cuid())
+  eventId           String
+  lastName          String
+  firstName         String
+  email             String
+  alias             String
+  gender            String
+  ageRange          String
+  phone             String
+  nationality       String
+  city              String
+  associationName   String?
+  associationRole   String?
+  representedArtist String
+  profession        String
+  socialLinks       String
+  yearsInIndustry   String
+  bioText           String?
+  cvFilePath        String?
+  cvOriginalName    String?
+  status            String   @default("pending") // pending | approved | rejected
+  reviewedAt        DateTime?
+  createdAt         DateTime @default(now())
+  event             Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([status])
 }

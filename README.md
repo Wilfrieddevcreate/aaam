@@ -20,6 +20,28 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Email
+
+The project includes a reusable email system based on `nodemailer`.
+
+Configure these variables in `.env`:
+
+```bash
+APP_URL="http://localhost:3000"
+MAIL_FROM="AAAM <no-reply@your-domain.com>"
+MAIL_TO_ADMIN="admin@your-domain.com"
+SMTP_HOST="smtp.your-provider.com"
+SMTP_PORT="587"
+SMTP_USER="your-smtp-user"
+SMTP_PASS="your-smtp-password"
+```
+
+Current email flows:
+
+- confirmation email after application submission
+- admin notification after application submission
+- applicant notification after acceptance or rejection
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

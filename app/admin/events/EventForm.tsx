@@ -9,61 +9,32 @@ export default function EventForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    if (state?.success) {
-      showSuccess("Masterclass créée avec succès !");
-      formRef.current?.reset();
-    } else if (state?.error) {
-      showError(state.error);
-    }
+    if (state?.success) { showSuccess("Masterclass créée !"); formRef.current?.reset(); }
+    else if (state?.error) showError(state.error);
   }, [state]);
 
   return (
-    <form ref={formRef} action={formAction} className="card p-6 space-y-4">
+    <form ref={formRef} action={formAction} className="card p-7 space-y-5">
+      <Field label="Titre" id="title" placeholder="Ex: Masterclass Management" />
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-text-1 mb-2">
-          Titre *
-        </label>
-        <input id="title" name="title" required className="input-field" placeholder="Ex: Masterclass Management" />
+        <label htmlFor="description" className="block text-sm font-medium text-text-1 mb-2">Description</label>
+        <textarea id="description" name="description" required rows={3} className="input-field resize-none" placeholder="Description de l'événement..." />
       </div>
-
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-text-1 mb-2">
-          Description *
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          required
-          rows={3}
-          className="input-field resize-none"
-          placeholder="Description de l'événement..."
-        />
-      </div>
-
-      <div>
-        <label htmlFor="date" className="block text-sm font-medium text-text-1 mb-2">
-          Date *
-        </label>
-        <input id="date" name="date" type="datetime-local" required className="input-field" />
-      </div>
-
-      <div>
-        <label htmlFor="speaker" className="block text-sm font-medium text-text-1 mb-2">
-          Intervenant *
-        </label>
-        <input id="speaker" name="speaker" required className="input-field" placeholder="Nom de l'intervenant" />
-      </div>
-
-      <div>
-        <label htmlFor="link" className="block text-sm font-medium text-text-1 mb-2">
-          Lien (Meet / Discord) *
-        </label>
-        <input id="link" name="link" required className="input-field" placeholder="https://meet.google.com/..." />
-      </div>
-
-      <button type="submit" disabled={isPending} className="btn-primary w-full py-3">
+      <Field label="Date" id="date" type="datetime-local" />
+      <Field label="Intervenant" id="speaker" placeholder="Nom de l'intervenant" />
+      <Field label="Lien (Meet / Discord)" id="link" placeholder="https://meet.google.com/..." />
+      <button type="submit" disabled={isPending} className="btn-primary w-full py-3.5">
         {isPending ? "Création..." : "Créer la Masterclass"}
       </button>
     </form>
+  );
+}
+
+function Field({ label, id, type = "text", placeholder }: { label: string; id: string; type?: string; placeholder?: string }) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium text-text-1 mb-2">{label}</label>
+      <input id={id} name={id} type={type} required className="input-field" placeholder={placeholder} />
+    </div>
   );
 }

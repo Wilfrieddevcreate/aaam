@@ -62,7 +62,7 @@ export default function ApplicationForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="card p-6 sm:p-8 space-y-6"
+      className="card p-8 sm:p-10 space-y-7"
     >
       {/* Name */}
       <div>

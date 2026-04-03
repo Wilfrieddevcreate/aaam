@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { type Locale, t as translate, type TranslationKey } from "./translations";
 
 const LocaleContext = createContext<{
@@ -18,14 +18,14 @@ export function useLocale() {
 }
 
 export default function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("fr");
-
-  useEffect(() => {
-    const stored = localStorage.getItem("aaam-locale") as Locale | null;
-    if (stored === "en" || stored === "fr") {
-      setLocaleState(stored);
+  const [locale, setLocaleState] = useState<Locale>(() => {
+    if (typeof window === "undefined") {
+      return "fr";
     }
-  }, []);
+
+    const stored = localStorage.getItem("aaam-locale") as Locale | null;
+    return stored === "en" || stored === "fr" ? stored : "fr";
+  });
 
   const setLocale = (l: Locale) => {
     setLocaleState(l);

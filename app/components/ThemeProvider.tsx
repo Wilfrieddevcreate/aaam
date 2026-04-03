@@ -1,6 +1,11 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useSyncExternalStore,
+} from "react";
 
 type Theme = "light" | "dark";
 
@@ -9,49 +14,63 @@ const ThemeContext = createContext<{
   toggle: () => void;
 }>({ theme: "dark", toggle: () => {} });
 
+const THEME_CHANGE_EVENT = "aaam-theme-change";
+
 export function useTheme() {
   return useContext(ThemeContext);
 }
 
-function getInitialTheme(): Theme {
+function getThemeSnapshot(): Theme {
   if (typeof window === "undefined") return "dark";
   const stored = localStorage.getItem("aaam-theme") as Theme | null;
   if (stored) return stored;
   return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 }
 
+function subscribe(callback: () => void) {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
+
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+
+  const handleChange = () => {
+    callback();
+  };
+
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === "aaam-theme") {
+      callback();
+    }
+  };
+
+  mq.addEventListener("change", handleChange);
+  window.addEventListener("storage", handleStorage);
+  window.addEventListener(THEME_CHANGE_EVENT, handleChange);
+
+  return () => {
+    mq.removeEventListener("change", handleChange);
+    window.removeEventListener("storage", handleStorage);
+    window.removeEventListener(THEME_CHANGE_EVENT, handleChange);
+  };
+}
+
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
-  const [mounted, setMounted] = useState(false);
+  const theme = useSyncExternalStore(subscribe, getThemeSnapshot, () => "dark" as Theme) as Theme;
 
   useEffect(() => {
-    const initial = getInitialTheme();
-    setTheme(initial);
-    document.documentElement.classList.toggle("dark", initial === "dark");
-    setMounted(true);
-
-    // Listen for system preference changes (only when no manual override)
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem("aaam-theme")) {
-        const next = e.matches ? "dark" : "light";
-        setTheme(next);
-        document.documentElement.classList.toggle("dark", next === "dark");
-      }
-    };
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
 
   const toggle = () => {
     const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
     localStorage.setItem("aaam-theme", next);
     document.documentElement.classList.toggle("dark", next === "dark");
+    window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
   };
 
   return (
-    <ThemeContext.Provider value={{ theme: mounted ? theme : "dark", toggle }}>
+    <ThemeContext.Provider value={{ theme, toggle }}>
       {children}
     </ThemeContext.Provider>
   );

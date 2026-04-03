@@ -25,14 +25,16 @@ export default function ValuesSection() {
         <div className="grid lg:grid-cols-2 gap-20">
           {/* Who can join */}
           <AnimatedSection>
-            <span className="section-label block mb-5">Qui peut rejoindre ?</span>
+            <span className="section-label block mb-5">
+              Qui peut rejoindre ?
+            </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-text-1 mb-7 tracking-tight">
-              Devenez un <span className="text-primary">AAAMi</span>
+              Devenez un <span className="text-primary">AAAM</span>
             </h2>
             <p className="text-text-2 mb-8 leading-[1.8] text-base">
               Les candidats à l&apos;adhésion doivent être des gestionnaires
-              d&apos;artistes actifs dans l&apos;industrie musicale africaine avec
-              une expérience professionnelle confirmée.
+              d&apos;artistes actifs dans l&apos;industrie musicale africaine
+              avec une expérience professionnelle confirmée.
             </p>
             <div className="flex flex-wrap gap-2.5">
               {roles.map((role, i) => (
@@ -48,7 +50,7 @@ export default function ValuesSection() {
 
           {/* Rights */}
           <AnimatedSection delay={0.12}>
-            <span className="section-label block mb-5">Droits des AAAMis</span>
+            <span className="section-label block mb-5">Droits des AAAMs</span>
             <h2 className="text-3xl sm:text-4xl font-bold text-text-1 mb-7 tracking-tight">
               Vos <span className="text-primary">avantages</span>
             </h2>
@@ -56,11 +58,23 @@ export default function ValuesSection() {
               {memberRights.map((right, i) => (
                 <div key={i} className="flex items-start gap-4 card p-5">
                   <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 text-primary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   </div>
-                  <span className="text-text-2 text-[15px] leading-relaxed pt-1.5">{right}</span>
+                  <span className="text-text-2 text-[15px] leading-relaxed pt-1.5">
+                    {right}
+                  </span>
                 </div>
               ))}
             </div>

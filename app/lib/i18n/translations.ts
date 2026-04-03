@@ -15,7 +15,7 @@ const translations = {
     fr: "Le carrefour essentiel de l'innovation, de la collaboration et de l'excellence au sein de l'industrie musicale africaine.",
     en: "The essential crossroads of innovation, collaboration and excellence in the African music industry.",
   },
-  "hero.cta.join": { fr: "Devenir AAAMi", en: "Become an AAAMi" },
+  "hero.cta.join": { fr: "Devenir AAAM", en: "Become an AAAM" },
   "hero.cta.discover": { fr: "Découvrir", en: "Discover" },
 
   // ── ABOUT ──
@@ -51,8 +51,8 @@ const translations = {
   },
   "mission.obj3.title": { fr: "Défense des Intérêts", en: "Advocacy" },
   "mission.obj3.desc": {
-    fr: "Défendre les intérêts communs des AAAMis et représenter la voix de l'industrie musicale africaine.",
-    en: "Defending the common interests of AAAMis and representing the voice of the African music industry.",
+    fr: "Défendre les intérêts communs des AAAMs et représenter la voix de l'industrie musicale africaine.",
+    en: "Defending the common interests of AAAMs and representing the voice of the African music industry.",
   },
   "mission.obj4.title": { fr: "Professionnalisation", en: "Professionalization" },
   "mission.obj4.desc": {
@@ -67,7 +67,7 @@ const translations = {
     fr: "Les candidats à l'adhésion doivent être des gestionnaires d'artistes actifs dans l'industrie musicale africaine avec une expérience professionnelle confirmée.",
     en: "Applicants must be active artist managers in the African music industry with proven professional experience.",
   },
-  "values.label.rights": { fr: "Droits des AAAMis", en: "AAAMi Benefits" },
+  "values.label.rights": { fr: "Droits des AAAMs", en: "AAAM Benefits" },
   "values.title.benefits": { fr: "Vos ", en: "Your " },
   "values.title.benefits.2": { fr: "avantages", en: "benefits" },
   "values.right.1": { fr: "Accès aux ressources exclusives de l'AAAM", en: "Access to exclusive AAAM resources" },
@@ -79,8 +79,8 @@ const translations = {
   "cta.title.1": { fr: "Prêt à rejoindre", en: "Ready to join" },
   "cta.title.2": { fr: "le mouvement ?", en: "the movement?" },
   "cta.desc": {
-    fr: "Remplissez le formulaire de candidature et rejoignez la communauté des AAAMis. Ensemble, construisons l'avenir de l'industrie musicale africaine.",
-    en: "Fill out the application form and join the AAAMi community. Together, let's build the future of the African music industry.",
+    fr: "Remplissez le formulaire de candidature et rejoignez la communauté des AAAMs. Ensemble, construisons l'avenir de l'industrie musicale africaine.",
+    en: "Fill out the application form and join the AAAM community. Together, let's build the future of the African music industry.",
   },
   "cta.button": { fr: "Soumettre ma candidature", en: "Submit my application" },
 
@@ -142,7 +142,7 @@ const translations = {
   "footer.nav": { fr: "Navigation", en: "Navigation" },
   "footer.platform": { fr: "Plateforme", en: "Platform" },
   "footer.admin": { fr: "Espace Admin", en: "Admin Panel" },
-  "footer.join": { fr: "Devenir AAAMi", en: "Become an AAAMi" },
+  "footer.join": { fr: "Devenir AAAM", en: "Become an AAAM" },
   "footer.contact": { fr: "Contact", en: "Contact" },
   "footer.founder": { fr: "Fondée par", en: "Founded by" },
   "footer.rights": { fr: "Tous droits réservés", en: "All rights reserved" },
