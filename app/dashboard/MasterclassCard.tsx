@@ -13,6 +13,10 @@ interface Event {
 }
 
 export default function MasterclassCard({ event, isPast }: { event: Event; isPast?: boolean }) {
+  const shortDesc = event.description.length > 120
+    ? event.description.slice(0, 120).trimEnd() + "…"
+    : event.description;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -21,14 +25,20 @@ export default function MasterclassCard({ event, isPast }: { event: Event; isPas
       className="card card-interactive p-7 flex flex-col"
     >
       <div className="flex items-center justify-between mb-4">
-        <span className="badge badge-warning">Masterclass</span>
+        <span className={`badge ${isPast ? "badge-neutral" : "badge-warning"}`}>
+          {isPast ? "Terminé" : "Masterclass"}
+        </span>
         <span className="text-text-3 text-sm">
           {new Date(event.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
         </span>
       </div>
 
       <h3 className="text-text-1 font-bold text-xl mb-3">{event.title}</h3>
-      <p className="text-text-2 text-base leading-relaxed mb-6 flex-1">{event.description}</p>
+      <p className="text-text-2 text-base leading-relaxed mb-4 flex-1">{shortDesc}</p>
+
+      <Link href={`/masterclass/${event.id}`} className="text-primary text-sm font-semibold hover:underline mb-4">
+        Voir les détails →
+      </Link>
 
       <div className="flex items-center justify-between pt-5 border-t border-border">
         <span className="text-text-2 text-sm">
