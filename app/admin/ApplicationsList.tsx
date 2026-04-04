@@ -2,6 +2,7 @@
 
 import { updateApplicationStatus, deleteApplication } from "@/app/actions/applications";
 import { showSuccess, showError, showConfirm } from "@/app/components/SweetAlertProvider";
+import TruncatedText from "@/app/components/TruncatedText";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -50,6 +51,7 @@ export default function ApplicationsList({ applications }: { applications: Appli
 
   return (
     <div>
+      {/* Filters */}
       <div className="flex gap-2 mb-8 flex-wrap">
         {[
           { key: "all", label: "Toutes" },
@@ -61,7 +63,9 @@ export default function ApplicationsList({ applications }: { applications: Appli
             key={f.key}
             onClick={() => setFilter(f.key)}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
-              filter === f.key ? "bg-primary text-white shadow-sm" : "bg-bg-surface text-text-2 hover:bg-bg-surface-hover"
+              filter === f.key
+                ? "bg-primary text-white shadow-sm"
+                : "bg-bg-surface text-text-2 hover:bg-bg-surface-hover"
             }`}
           >
             {f.label}
@@ -69,54 +73,100 @@ export default function ApplicationsList({ applications }: { applications: Appli
         ))}
       </div>
 
+      {/* Empty state */}
       {filtered.length === 0 ? (
-        <div className="card p-14 text-center text-text-3 text-lg">Aucune candidature trouvée.</div>
+        <div className="card p-14 text-center">
+          <p className="text-text-3 text-lg">Aucune candidature trouvée.</p>
+        </div>
       ) : (
         <div className="space-y-4">
           {filtered.map((app, i) => (
-            <motion.div key={app.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="card p-6 sm:p-7">
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-5">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-3 flex-wrap">
-                    <h3 className="text-text-1 font-bold text-lg">{app.name}</h3>
-                    <StatusBadge status={app.status} />
+            <motion.div
+              key={app.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04 }}
+              className="card overflow-hidden"
+            >
+              {/* Header row */}
+              <div className="px-5 py-4 sm:px-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3 flex-wrap min-w-0">
+                  {/* Avatar */}
+                  <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <span className="text-primary text-sm font-bold">{app.name.charAt(0).toUpperCase()}</span>
                   </div>
-                  <div className="grid sm:grid-cols-2 gap-x-8 gap-y-1.5 text-sm text-text-2 mb-4">
-                    <p>Email: <span className="text-text-1 font-medium">{app.email}</span></p>
-                    <p>Tél: <span className="text-text-1 font-medium">{app.phone}</span></p>
-                    <p>Pays: <span className="text-text-1 font-medium">{app.country}</span></p>
-                    <p>Rôle: <span className="text-text-1 font-medium">{app.role}</span></p>
+                  <div className="min-w-0">
+                    <h3 className="text-text-1 font-bold text-base truncate">{app.name}</h3>
+                    <p className="text-text-3 text-xs">{new Date(app.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}</p>
                   </div>
-                  <div className="text-sm mb-3">
-                    <p className="text-text-3 font-medium mb-1">Expérience</p>
-                    <p className="text-text-2 leading-relaxed">{app.experience}</p>
-                  </div>
-                  <div className="text-sm">
-                    <p className="text-text-3 font-medium mb-1">Motivation</p>
-                    <p className="text-text-2 leading-relaxed">{app.motivation}</p>
-                  </div>
+                  <StatusBadge status={app.status} />
                 </div>
 
-                <div className="flex sm:flex-col gap-2 shrink-0">
+                {/* Actions */}
+                <div className="flex gap-2 shrink-0">
                   {app.status === "pending" && (
                     <>
-                      <button onClick={() => handleStatus(app.id, "accepted")} className="px-4 py-2 rounded-xl bg-success/10 text-success text-sm font-medium hover:bg-success/20 transition-colors cursor-pointer">
+                      <button
+                        onClick={() => handleStatus(app.id, "accepted")}
+                        className="px-3 py-1.5 rounded-lg bg-success/10 text-success text-xs font-semibold hover:bg-success/20 transition-colors cursor-pointer"
+                      >
                         Accepter
                       </button>
-                      <button onClick={() => handleStatus(app.id, "rejected")} className="px-4 py-2 rounded-xl bg-error/10 text-error text-sm font-medium hover:bg-error/20 transition-colors cursor-pointer">
+                      <button
+                        onClick={() => handleStatus(app.id, "rejected")}
+                        className="px-3 py-1.5 rounded-lg bg-error/10 text-error text-xs font-semibold hover:bg-error/20 transition-colors cursor-pointer"
+                      >
                         Refuser
                       </button>
                     </>
                   )}
-                  <button onClick={() => handleDelete(app.id)} className="px-4 py-2 rounded-xl bg-bg-surface text-text-3 text-sm font-medium hover:text-error hover:bg-error/5 transition-colors cursor-pointer">
+                  <button
+                    onClick={() => handleDelete(app.id)}
+                    className="px-3 py-1.5 rounded-lg bg-bg-surface text-text-3 text-xs font-medium hover:text-error hover:bg-error/5 transition-colors cursor-pointer"
+                  >
                     Supprimer
                   </button>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="px-5 py-4 sm:px-6 space-y-4">
+                {/* Info grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                  <InfoRow label="Email" value={app.email} />
+                  <InfoRow label="Téléphone" value={app.phone} />
+                  <InfoRow label="Pays" value={app.country} />
+                  <InfoRow label="Rôle" value={app.role} />
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-border" />
+
+                {/* Experience */}
+                <div>
+                  <p className="text-xs font-semibold text-text-3 uppercase tracking-wider mb-1.5">Expérience</p>
+                  <TruncatedText text={app.experience} maxLength={150} className="text-sm text-text-2 leading-relaxed" />
+                </div>
+
+                {/* Motivation */}
+                <div>
+                  <p className="text-xs font-semibold text-text-3 uppercase tracking-wider mb-1.5">Motivation</p>
+                  <TruncatedText text={app.motivation} maxLength={150} className="text-sm text-text-2 leading-relaxed" />
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline gap-2 text-sm">
+      <span className="text-text-3 shrink-0">{label}:</span>
+      <span className="text-text-1 font-medium truncate">{value}</span>
     </div>
   );
 }

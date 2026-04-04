@@ -1,12 +1,10 @@
 "use client";
 
 import { updateMasterclassRequestStatus } from "@/app/actions/masterclass-requests";
-import {
-  showConfirm,
-  showError,
-  showSuccess,
-} from "@/app/components/SweetAlertProvider";
+import { showConfirm, showError, showSuccess } from "@/app/components/SweetAlertProvider";
+import TruncatedText from "@/app/components/TruncatedText";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 interface RequestItem {
   id: string;
@@ -42,165 +40,180 @@ export default function RequestsList({ requests }: { requests: RequestItem[] }) 
     const confirmed = await showConfirm(
       status === "approved" ? "Valider cette demande ?" : "Refuser cette demande ?",
       status === "approved"
-        ? "Un email d'acces sera envoye au demandeur."
-        : "Un email de reponse sera envoye au demandeur."
+        ? "Un email d'accès sera envoyé au demandeur."
+        : "Un email de réponse sera envoyé au demandeur."
     );
-
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     const result = await updateMasterclassRequestStatus(id, status);
-    if (result.success) {
-      showSuccess(status === "approved" ? "Demande validee." : "Demande refusee.");
-    } else {
-      showError(result.error || "Erreur");
-    }
+    if (result.success) showSuccess(status === "approved" ? "Demande validée." : "Demande refusée.");
+    else showError(result.error || "Erreur");
   }
 
   if (requests.length === 0) {
-    return <div className="card p-10 text-center text-text-2">Aucune demande pour le moment.</div>;
+    return (
+      <div className="card p-14 text-center">
+        <p className="text-text-3 text-lg">Aucune demande pour le moment.</p>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-4">
       {requests.map((request, index) => (
-        <motion.div
-          key={request.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.04 }}
-          className="card p-6"
-        >
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex-1 space-y-4">
-              <div className="flex flex-wrap items-center gap-3">
-                <h3 className="font-semibold text-text-1">
-                  {request.firstName} {request.lastName}
-                </h3>
-                <StatusBadge status={request.status} />
-                <span className="text-xs text-text-3">
-                  {new Date(request.createdAt).toLocaleDateString("fr-FR")}
-                </span>
-              </div>
-
-              <div className="rounded-xl border border-border bg-bg-surface/50 p-4">
-                <p className="text-sm font-medium text-text-1">{request.event.title}</p>
-                <p className="mt-1 text-xs text-text-2">
-                  {new Date(request.event.date).toLocaleString("fr-FR", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}{" "}
-                  • {request.event.speaker}
-                </p>
-              </div>
-
-              <div className="grid gap-3 text-sm text-text-2 sm:grid-cols-2">
-                <Info label="Email" value={request.email} />
-                <Info label="Alias" value={request.alias} />
-                <Info label="Telephone" value={request.phone} />
-                <Info label="Genre" value={request.gender} />
-                <Info label="Tranche d'age" value={request.ageRange} />
-                <Info label="Nationalite" value={request.nationality} />
-                <Info label="Ville" value={request.city} />
-                <Info label="Anciennete" value={request.yearsInIndustry} />
-                <Info label="Artiste represente" value={request.representedArtist} />
-                <Info label="Metier" value={request.profession} />
-              </div>
-
-              <div className="text-sm text-text-2">
-                <p className="mb-1 font-medium text-text-1">Reseaux sociaux</p>
-                <p className="whitespace-pre-wrap break-words">{request.socialLinks}</p>
-              </div>
-
-              {(request.associationName || request.associationRole) && (
-                <div className="text-sm text-text-2">
-                  <p className="mb-1 font-medium text-text-1">Association</p>
-                  <p>{request.associationName || "Non renseigne"}</p>
-                  <p>{request.associationRole || "Role non renseigne"}</p>
-                </div>
-              )}
-
-              {request.bioText && (
-                <div className="text-sm text-text-2">
-                  <p className="mb-1 font-medium text-text-1">Biographie professionnelle</p>
-                  <p className="whitespace-pre-wrap">{request.bioText}</p>
-                </div>
-              )}
-
-              {request.cvFilePath && (
-                <div className="text-sm text-text-2">
-                  <p className="mb-1 font-medium text-text-1">CV joint</p>
-                  <a
-                    href={request.cvFilePath}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    {request.cvOriginalName || "Ouvrir le CV"}
-                  </a>
-                </div>
-              )}
-            </div>
-
-            <div className="flex shrink-0 gap-2 lg:flex-col">
-              {request.status === "pending" && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => handleStatus(request.id, "approved")}
-                    className="rounded border border-success/20 bg-success/10 px-3 py-1.5 text-xs text-success transition-colors hover:bg-success/20"
-                  >
-                    Valider
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleStatus(request.id, "rejected")}
-                    className="rounded border border-error/20 bg-error/10 px-3 py-1.5 text-xs text-error transition-colors hover:bg-error/20"
-                  >
-                    Refuser
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </motion.div>
+        <RequestCard key={request.id} request={request} index={index} onStatus={handleStatus} />
       ))}
     </div>
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
+function RequestCard({
+  request,
+  index,
+  onStatus,
+}: {
+  request: RequestItem;
+  index: number;
+  onStatus: (id: string, status: "approved" | "rejected") => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
-    <p>
-      {label}: <span className="text-text-1">{value}</span>
-    </p>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04 }}
+      className="card overflow-hidden"
+    >
+      {/* Header */}
+      <div className="px-5 py-4 sm:px-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3 flex-wrap min-w-0">
+          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            <span className="text-primary text-sm font-bold">{request.firstName.charAt(0)}</span>
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-text-1 font-bold text-base truncate">
+              {request.firstName} {request.lastName}
+            </h3>
+            <p className="text-text-3 text-xs">
+              {new Date(request.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
+            </p>
+          </div>
+          <StatusBadge status={request.status} />
+        </div>
+
+        <div className="flex gap-2 shrink-0">
+          {request.status === "pending" && (
+            <>
+              <button
+                onClick={() => onStatus(request.id, "approved")}
+                className="px-3 py-1.5 rounded-lg bg-success/10 text-success text-xs font-semibold hover:bg-success/20 transition-colors cursor-pointer"
+              >
+                Valider
+              </button>
+              <button
+                onClick={() => onStatus(request.id, "rejected")}
+                className="px-3 py-1.5 rounded-lg bg-error/10 text-error text-xs font-semibold hover:bg-error/20 transition-colors cursor-pointer"
+              >
+                Refuser
+              </button>
+            </>
+          )}
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="px-3 py-1.5 rounded-lg bg-bg-surface text-text-2 text-xs font-medium hover:bg-bg-surface-hover transition-colors cursor-pointer"
+          >
+            {expanded ? "Réduire" : "Détails"}
+          </button>
+        </div>
+      </div>
+
+      {/* Summary (always visible) */}
+      <div className="px-5 py-4 sm:px-6">
+        {/* Event tag */}
+        <div className="rounded-xl border border-border bg-bg-surface/50 px-4 py-3 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+          <p className="text-sm font-semibold text-text-1 truncate">{request.event.title}</p>
+          <p className="text-xs text-text-3 shrink-0">
+            {new Date(request.event.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
+            {" — "}{request.event.speaker}
+          </p>
+        </div>
+
+        {/* Key info */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+          <InfoRow label="Email" value={request.email} />
+          <InfoRow label="Téléphone" value={request.phone} />
+          <InfoRow label="Métier" value={request.profession} />
+          <InfoRow label="Artiste" value={request.representedArtist} />
+          <InfoRow label="Nationalité" value={request.nationality} />
+          <InfoRow label="Ville" value={request.city} />
+        </div>
+      </div>
+
+      {/* Expanded details */}
+      {expanded && (
+        <div className="px-5 pb-5 sm:px-6 space-y-4 border-t border-border pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+            <InfoRow label="Alias" value={request.alias} />
+            <InfoRow label="Genre" value={request.gender} />
+            <InfoRow label="Tranche d'âge" value={request.ageRange} />
+            <InfoRow label="Ancienneté" value={request.yearsInIndustry} />
+            {request.associationName && <InfoRow label="Association" value={request.associationName} />}
+            {request.associationRole && <InfoRow label="Rôle association" value={request.associationRole} />}
+          </div>
+
+          {/* Social links */}
+          <div>
+            <p className="text-xs font-semibold text-text-3 uppercase tracking-wider mb-1.5">Réseaux sociaux</p>
+            <TruncatedText text={request.socialLinks} maxLength={200} className="text-sm text-text-2 leading-relaxed break-all" />
+          </div>
+
+          {/* Bio */}
+          {request.bioText && (
+            <div>
+              <p className="text-xs font-semibold text-text-3 uppercase tracking-wider mb-1.5">Biographie</p>
+              <TruncatedText text={request.bioText} maxLength={200} className="text-sm text-text-2 leading-relaxed" />
+            </div>
+          )}
+
+          {/* CV */}
+          {request.cvFilePath && (
+            <div>
+              <p className="text-xs font-semibold text-text-3 uppercase tracking-wider mb-1.5">CV joint</p>
+              <a
+                href={request.cvFilePath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {request.cvOriginalName || "Télécharger le CV"}
+              </a>
+            </div>
+          )}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline gap-2 text-sm">
+      <span className="text-text-3 shrink-0">{label}:</span>
+      <span className="text-text-1 font-medium truncate">{value}</span>
+    </div>
   );
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const styles = {
-    pending: "border-warning/20 bg-warning/10 text-warning",
-    approved: "border-success/20 bg-success/10 text-success",
-    rejected: "border-error/20 bg-error/10 text-error",
+  const map: Record<string, { cls: string; label: string }> = {
+    pending: { cls: "badge-warning", label: "En attente" },
+    approved: { cls: "badge-success", label: "Validée" },
+    rejected: { cls: "badge-error", label: "Refusée" },
   };
-
-  const labels = {
-    pending: "En attente",
-    approved: "Validee",
-    rejected: "Refusee",
-  };
-
-  return (
-    <span
-      className={`rounded border px-2 py-0.5 text-[10px] uppercase tracking-wider ${
-        styles[status as keyof typeof styles] || ""
-      }`}
-    >
-      {labels[status as keyof typeof labels] || status}
-    </span>
-  );
+  const s = map[status] || { cls: "badge-neutral", label: status };
+  return <span className={`badge ${s.cls}`}>{s.label}</span>;
 }
