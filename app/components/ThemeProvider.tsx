@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useInsertionEffect,
   useSyncExternalStore,
 } from "react";
 
@@ -58,6 +59,12 @@ function subscribe(callback: () => void) {
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const theme = useSyncExternalStore(subscribe, getThemeSnapshot, () => "dark" as Theme) as Theme;
 
+  // Apply theme class as early as possible (before browser paint)
+  useInsertionEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
+
+  // Fallback for environments where useInsertionEffect doesn't fire
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);

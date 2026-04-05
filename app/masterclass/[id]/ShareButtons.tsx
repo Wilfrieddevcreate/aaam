@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocale } from "@/app/lib/i18n/LocaleProvider";
 
 export default function ShareButtons({ title }: { title: string }) {
   const [copied, setCopied] = useState(false);
+  const [url, setUrl] = useState("");
+  const { t } = useLocale();
 
-  const url = typeof window !== "undefined" ? window.location.href : "";
+  useEffect(() => {
+    setUrl(window.location.href);
+  }, []);
+
   const text = `${title} — AAAM Masterclass`;
 
   const copyLink = async () => {
@@ -16,7 +22,6 @@ export default function ShareButtons({ title }: { title: string }) {
 
   return (
     <div className="flex flex-wrap gap-3">
-      {/* WhatsApp */}
       <a
         href={`https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`}
         target="_blank"
@@ -27,7 +32,6 @@ export default function ShareButtons({ title }: { title: string }) {
         WhatsApp
       </a>
 
-      {/* Facebook */}
       <a
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`}
         target="_blank"
@@ -38,7 +42,6 @@ export default function ShareButtons({ title }: { title: string }) {
         Facebook
       </a>
 
-      {/* X / Twitter */}
       <a
         href={`https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`}
         target="_blank"
@@ -49,7 +52,6 @@ export default function ShareButtons({ title }: { title: string }) {
         X
       </a>
 
-      {/* LinkedIn */}
       <a
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`}
         target="_blank"
@@ -60,7 +62,6 @@ export default function ShareButtons({ title }: { title: string }) {
         LinkedIn
       </a>
 
-      {/* Copy link */}
       <button
         onClick={copyLink}
         className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-bg-surface text-text-2 text-sm font-medium hover:bg-bg-surface-hover transition-colors cursor-pointer"
@@ -68,7 +69,7 @@ export default function ShareButtons({ title }: { title: string }) {
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364L4.757 8.25" />
         </svg>
-        {copied ? "Copié !" : "Copier le lien"}
+        {copied ? t("share.copied") : t("share.copy")}
       </button>
     </div>
   );

@@ -4,13 +4,14 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import ShareButtons from "./ShareButtons";
 import Link from "next/link";
+import T from "@/app/components/T";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const event = await prisma.event.findUnique({ where: { id }, select: { title: true, description: true } });
   if (!event) return { title: "Masterclass — AAAM" };
   return {
-    title: `${event.title} — AAAM`,
+    title: `${event.title} — AAAM Masterclass`,
     description: event.description.slice(0, 160),
   };
 }
@@ -37,14 +38,13 @@ export default async function MasterclassDetailPage({ params }: { params: Promis
       <Navbar />
       <main className="flex-1 pt-36 pb-24">
         <div className="max-w-3xl mx-auto px-5 sm:px-8">
-          {/* Header */}
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-6">
               <span className={`badge ${isPast ? "badge-neutral" : "badge-warning"}`}>
-                {isPast ? "Terminé" : "Masterclass"}
+                {isPast ? <T k="mc.ended" /> : <T k="mc.label" />}
               </span>
               <Link href="/dashboard" className="text-text-3 text-sm hover:text-primary transition-colors">
-                ← Toutes les masterclass
+                <T k="mc.back" />
               </Link>
             </div>
 
@@ -52,7 +52,6 @@ export default async function MasterclassDetailPage({ params }: { params: Promis
               {event.title}
             </h1>
 
-            {/* Meta */}
             <div className="flex flex-wrap gap-6 text-base text-text-2 mb-8">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-text-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -75,25 +74,22 @@ export default async function MasterclassDetailPage({ params }: { params: Promis
             </div>
           </div>
 
-          {/* Description */}
           <div className="card p-8 sm:p-10 mb-10">
-            <h2 className="text-lg font-bold text-text-1 mb-5">Description</h2>
+            <h2 className="text-lg font-bold text-text-1 mb-5"><T k="mc.description" /></h2>
             <div className="text-text-2 text-base leading-[1.9] whitespace-pre-wrap">
               {event.description}
             </div>
           </div>
 
-          {/* Share */}
           <div className="card p-6 sm:p-8 mb-10">
-            <h2 className="text-lg font-bold text-text-1 mb-4">Partager</h2>
+            <h2 className="text-lg font-bold text-text-1 mb-4"><T k="mc.share" /></h2>
             <ShareButtons title={event.title} />
           </div>
 
-          {/* CTA */}
           {!isPast && (
             <div className="text-center">
               <Link href={`/masterclass/${event.id}/apply`} className="btn-primary px-10 py-4 text-base">
-                Demander l&apos;accès à cette masterclass
+                <T k="mc.request_access" />
               </Link>
             </div>
           )}

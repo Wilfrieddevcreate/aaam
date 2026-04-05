@@ -1,7 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useCallback, useSyncExternalStore } from "react";
 import { type Locale, t as translate, type TranslationKey } from "./translations";
+
+const LOCALE_CHANGE_EVENT = "aaam-locale-change";
 
 const LocaleContext = createContext<{
   locale: Locale;
@@ -17,22 +19,46 @@ export function useLocale() {
   return useContext(LocaleContext);
 }
 
-export default function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window === "undefined") {
-      return "fr";
-    }
+function getLocaleSnapshot(): Locale {
+  if (typeof window === "undefined") return "fr";
+  const stored = localStorage.getItem("aaam-locale") as Locale | null;
+  return stored === "en" || stored === "fr" ? stored : "fr";
+}
 
-    const stored = localStorage.getItem("aaam-locale") as Locale | null;
-    return stored === "en" || stored === "fr" ? stored : "fr";
-  });
+function getServerSnapshot(): Locale {
+  return "fr";
+}
 
-  const setLocale = (l: Locale) => {
-    setLocaleState(l);
-    localStorage.setItem("aaam-locale", l);
+function subscribe(callback: () => void) {
+  if (typeof window === "undefined") return () => {};
+
+  const handleChange = () => callback();
+
+  const handleStorage = (e: StorageEvent) => {
+    if (e.key === "aaam-locale") callback();
   };
 
-  const tFn = (key: TranslationKey) => translate(key, locale);
+  window.addEventListener(LOCALE_CHANGE_EVENT, handleChange);
+  window.addEventListener("storage", handleStorage);
+
+  return () => {
+    window.removeEventListener(LOCALE_CHANGE_EVENT, handleChange);
+    window.removeEventListener("storage", handleStorage);
+  };
+}
+
+export default function LocaleProvider({ children }: { children: React.ReactNode }) {
+  const locale = useSyncExternalStore(subscribe, getLocaleSnapshot, getServerSnapshot);
+
+  const setLocale = useCallback((l: Locale) => {
+    localStorage.setItem("aaam-locale", l);
+    window.dispatchEvent(new Event(LOCALE_CHANGE_EVENT));
+  }, []);
+
+  const tFn = useCallback(
+    (key: TranslationKey) => translate(key, locale),
+    [locale]
+  );
 
   return (
     <LocaleContext.Provider value={{ locale, setLocale, t: tFn }}>

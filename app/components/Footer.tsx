@@ -42,7 +42,11 @@ export default function Footer() {
         </div>
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-text-3 text-sm">&copy; {new Date().getFullYear()} African Alliance of Artist Managers</p>
-          <p className="text-text-3 text-sm">{t("footer.rights")}</p>
+          <div className="flex items-center gap-4">
+            <FLink href="/privacy">{t("footer.privacy")}</FLink>
+            <FLink href="/terms">{t("footer.terms")}</FLink>
+            <span className="text-text-3 text-sm">{t("footer.rights")}</span>
+          </div>
         </div>
       </div>
     </footer>

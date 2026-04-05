@@ -131,7 +131,7 @@ export default function WhyJoinSection() {
               {fr ? "Qui peut rejoindre ?" : "Who can join?"}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-text-1 mb-6 leading-tight">
-              {fr ? "Devenez un " : "Become an "}
+              {fr ? "Devenez un membre de " : "Become an member of "}
               <span className="text-primary">AAAM</span>
             </h2>
             <p className="text-text-2 text-lg leading-[1.85] mb-8">

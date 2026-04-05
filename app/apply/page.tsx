@@ -1,11 +1,16 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ApplicationForm from "./ApplicationForm";
+import T from "../components/T";
 
 export const metadata = {
-  title: "Candidature — AAAM",
+  title: "Candidature",
   description:
-    "Soumettez votre candidature pour rejoindre l'African Alliance of Artist Managers.",
+    "Soumettez votre candidature pour rejoindre l'African Alliance of Artist Managers. Managers d'artistes, promoteurs, directeurs artistiques — devenez un AAAM.",
+  openGraph: {
+    title: "Candidature — AAAM",
+    description: "Rejoignez la communauté des professionnels de l'industrie musicale africaine.",
+  },
 };
 
 export default function ApplyPage() {
@@ -16,14 +21,13 @@ export default function ApplyPage() {
         <div className="max-w-2xl mx-auto px-5 sm:px-8">
           <div className="text-center mb-14">
             <span className="section-label block mb-5">
-              Formulaire d&apos;adhésion
+              <T k="apply.label" />
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-text-1 mb-6">
-              Devenez un <span className="text-primary">AAAM</span>
+              <T k="apply.title" /><span className="text-primary">AAAM</span>
             </h1>
             <p className="text-text-2 text-lg leading-relaxed max-w-lg mx-auto">
-              Remplissez ce formulaire pour soumettre votre demande
-              d&apos;adhésion. Le comité vous informera par email.
+              <T k="apply.desc" />
             </p>
           </div>
           <ApplicationForm />

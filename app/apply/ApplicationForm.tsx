@@ -4,34 +4,33 @@ import { useActionState, useEffect } from "react";
 import { submitApplication } from "@/app/actions/applications";
 import { showSuccess, showError } from "@/app/components/SweetAlertProvider";
 import { motion } from "framer-motion";
+import { useLocale } from "@/app/lib/i18n/LocaleProvider";
+import type { TranslationKey } from "@/app/lib/i18n/translations";
 
-const musicRoles = [
-  "Manager d'artiste",
-  "Directeur artistique",
-  "Chargé de communication",
-  "Bookeur",
-  "Promoteur",
-  "Producteur",
-  "Ingénieur du son",
-  "Autre",
+const roleKeys: TranslationKey[] = [
+  "role.manager", "role.director", "role.communication", "role.booker",
+  "role.promoter", "role.producer", "role.sound", "role.other",
 ];
 
-const countries = [
-  "Bénin", "Burkina Faso", "Cameroun", "Côte d'Ivoire", "Gabon", "Ghana",
-  "Guinée", "Kenya", "Mali", "Maroc", "Nigeria", "République Démocratique du Congo",
-  "Sénégal", "Afrique du Sud", "Tanzanie", "Togo", "Tunisie", "Ouganda", "Autre",
+const countryKeys: TranslationKey[] = [
+  "country.benin", "country.burkina", "country.cameroon", "country.ivory",
+  "country.gabon", "country.ghana", "country.guinea", "country.kenya",
+  "country.mali", "country.morocco", "country.nigeria", "country.drc",
+  "country.senegal", "country.south_africa", "country.tanzania",
+  "country.togo", "country.tunisia", "country.uganda", "country.other",
 ];
 
 export default function ApplicationForm() {
   const [state, formAction, isPending] = useActionState(submitApplication, null);
+  const { t } = useLocale();
 
   useEffect(() => {
     if (state?.success) {
-      showSuccess("Candidature envoyée avec succès !");
+      showSuccess(t("apply.success.title"));
     } else if (state?.error) {
       showError(state.error);
     }
-  }, [state]);
+  }, [state, t]);
 
   if (state?.success) {
     return (
@@ -45,13 +44,8 @@ export default function ApplicationForm() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-text-1 mb-3">
-          Candidature envoyée !
-        </h2>
-        <p className="text-text-2 leading-relaxed">
-          Merci pour votre intérêt. Le comité d&apos;adhésion de l&apos;AAAM
-          examinera votre candidature et vous contactera par email.
-        </p>
+        <h2 className="text-2xl font-bold text-text-1 mb-3">{t("apply.success.title")}</h2>
+        <p className="text-text-2 leading-relaxed">{t("apply.success.desc")}</p>
       </motion.div>
     );
   }
@@ -64,87 +58,51 @@ export default function ApplicationForm() {
       transition={{ duration: 0.6 }}
       className="card p-8 sm:p-10 space-y-7"
     >
-      {/* Name */}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-text-1 mb-2">
-          Nom complet *
-        </label>
-        <input id="name" name="name" type="text" required className="input-field" placeholder="Votre nom complet" />
+        <label htmlFor="name" className="block text-sm font-medium text-text-1 mb-2">{t("apply.name")} *</label>
+        <input id="name" name="name" type="text" required className="input-field" placeholder={t("apply.name")} />
       </div>
 
-      {/* Email */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-text-1 mb-2">
-          Email *
-        </label>
+        <label htmlFor="email" className="block text-sm font-medium text-text-1 mb-2">{t("apply.email")} *</label>
         <input id="email" name="email" type="email" required className="input-field" placeholder="votre@email.com" />
       </div>
 
-      {/* Phone */}
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-text-1 mb-2">
-          Téléphone *
-        </label>
+        <label htmlFor="phone" className="block text-sm font-medium text-text-1 mb-2">{t("apply.phone")} *</label>
         <input id="phone" name="phone" type="tel" required className="input-field" placeholder="+229 XX XX XX XX" />
       </div>
 
-      {/* Country */}
       <div>
-        <label htmlFor="country" className="block text-sm font-medium text-text-1 mb-2">
-          Pays *
-        </label>
+        <label htmlFor="country" className="block text-sm font-medium text-text-1 mb-2">{t("apply.country")} *</label>
         <select id="country" name="country" required className="input-field">
-          <option value="">Sélectionnez votre pays</option>
-          {countries.map((c) => (
-            <option key={c} value={c}>{c}</option>
+          <option value="">{t("apply.country.placeholder")}</option>
+          {countryKeys.map((k) => (
+            <option key={k} value={t(k)}>{t(k)}</option>
           ))}
         </select>
       </div>
 
-      {/* Role */}
       <div>
-        <label htmlFor="role" className="block text-sm font-medium text-text-1 mb-2">
-          Métier / Rôle dans l&apos;industrie *
-        </label>
+        <label htmlFor="role" className="block text-sm font-medium text-text-1 mb-2">{t("apply.role")} *</label>
         <select id="role" name="role" required className="input-field">
-          <option value="">Sélectionnez votre rôle</option>
-          {musicRoles.map((r) => (
-            <option key={r} value={r}>{r}</option>
+          <option value="">{t("apply.role.placeholder")}</option>
+          {roleKeys.map((k) => (
+            <option key={k} value={t(k)}>{t(k)}</option>
           ))}
         </select>
       </div>
 
-      {/* Experience */}
       <div>
-        <label htmlFor="experience" className="block text-sm font-medium text-text-1 mb-2">
-          Expérience professionnelle *
-        </label>
-        <textarea
-          id="experience"
-          name="experience"
-          required
-          rows={3}
-          className="input-field resize-none"
-          placeholder="Décrivez votre parcours et votre expérience dans l'industrie musicale..."
-        />
+        <label htmlFor="experience" className="block text-sm font-medium text-text-1 mb-2">{t("apply.experience")} *</label>
+        <textarea id="experience" name="experience" required rows={3} className="input-field resize-none" placeholder={t("apply.experience.placeholder")} />
       </div>
 
-      {/* Motivation */}
       <div>
-        <label htmlFor="motivation" className="block text-sm font-medium text-text-1 mb-2">
-          Motivation *
-        </label>
-        <textarea
-          id="motivation"
-          name="motivation"
-          required
-          rows={3}
-          className="input-field resize-none"
-          placeholder="Pourquoi souhaitez-vous rejoindre l'AAAM ?"
-        />
+        <label htmlFor="motivation" className="block text-sm font-medium text-text-1 mb-2">{t("apply.motivation")} *</label>
+        <textarea id="motivation" name="motivation" required rows={3} className="input-field resize-none" placeholder={t("apply.motivation.placeholder")} />
       </div>
 
-      {/* Submit */}
       <button type="submit" disabled={isPending} className="btn-primary w-full py-4">
         {isPending ? (
           <span className="flex items-center gap-2">
@@ -152,10 +110,10 @@ export default function ApplicationForm() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Envoi en cours...
+            {t("apply.sending")}
           </span>
         ) : (
-          "Soumettre ma candidature"
+          t("apply.submit")
         )}
       </button>
     </motion.form>

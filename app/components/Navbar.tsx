@@ -13,6 +13,7 @@ export default function Navbar() {
   const { t } = useLocale();
 
   const links = [
+    { href: "/", label: t("nav.home") },
     { href: "/about", label: t("nav.about") },
     { href: "/mission", label: t("nav.mission") },
     { href: "/apply", label: t("nav.apply") },
